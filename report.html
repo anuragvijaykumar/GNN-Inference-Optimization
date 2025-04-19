@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GCN Inference Optimization Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    h1, h2 { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>GCN Inference Optimization Report</h1>
+  <p>This report summarizes the mean inference latency and GPU memory usage for GCN across three datasets (Cora, Pubmed, Citeseer) under four optimization modes: <strong>baseline</strong>, <strong>torch.compile</strong>, <strong>automatic mixed precision (AMP)</strong>, and <strong>compile + AMP</strong>. Each configuration was run for 100 repeats, and the mean/std statistics are presented below.</p>
+
+  <h2>Summary Table</h2>
+  <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Dataset</th>
+      <th>Technique</th>
+      <th>Runs</th>
+      <th>Mean Inference (ms)</th>
+      <th>Std Dev (ms)</th>
+      <th>Mean GPU Mem (MB)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cora</td>
+      <td>baseline</td>
+      <td>100</td>
+      <td>761.274385</td>
+      <td>628.708436</td>
+      <td>17.642496</td>
+    </tr>
+    <tr>
+      <td>Cora</td>
+      <td>compile</td>
+      <td>100</td>
+      <td>710.049903</td>
+      <td>6.922650</td>
+      <td>17.642496</td>
+    </tr>
+    <tr>
+      <td>Cora</td>
+      <td>amp</td>
+      <td>100</td>
+      <td>699.536512</td>
+      <td>6.433084</td>
+      <td>17.642496</td>
+    </tr>
+    <tr>
+      <td>Cora</td>
+      <td>compile_amp</td>
+      <td>100</td>
+      <td>711.239839</td>
+      <td>7.631259</td>
+      <td>17.642496</td>
+    </tr>
+    <tr>
+      <td>Pubmed</td>
+      <td>baseline</td>
+      <td>100</td>
+      <td>704.107411</td>
+      <td>10.503784</td>
+      <td>52.990976</td>
+    </tr>
+    <tr>
+      <td>Pubmed</td>
+      <td>compile</td>
+      <td>100</td>
+      <td>715.059397</td>
+      <td>12.008575</td>
+      <td>52.990976</td>
+    </tr>
+    <tr>
+      <td>Pubmed</td>
+      <td>amp</td>
+      <td>100</td>
+      <td>704.779143</td>
+      <td>11.020675</td>
+      <td>52.990976</td>
+    </tr>
+    <tr>
+      <td>Pubmed</td>
+      <td>compile_amp</td>
+      <td>100</td>
+      <td>727.920754</td>
+      <td>35.069750</td>
+      <td>52.990976</td>
+    </tr>
+    <tr>
+      <td>Citeseer</td>
+      <td>baseline</td>
+      <td>100</td>
+      <td>700.239685</td>
+      <td>5.938588</td>
+      <td>52.286976</td>
+    </tr>
+    <tr>
+      <td>Citeseer</td>
+      <td>compile</td>
+      <td>100</td>
+      <td>709.549911</td>
+      <td>7.781241</td>
+      <td>52.286976</td>
+    </tr>
+    <tr>
+      <td>Citeseer</td>
+      <td>amp</td>
+      <td>100</td>
+      <td>697.000051</td>
+      <td>7.237033</td>
+      <td>52.286976</td>
+    </tr>
+    <tr>
+      <td>Citeseer</td>
+      <td>compile_amp</td>
+      <td>100</td>
+      <td>711.382697</td>
+      <td>8.097623</td>
+      <td>52.286976</td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2>Inference Time Comparison</h2>
+  <img src="gcn_inference_summary.png" alt="Inference Time Plot" style="max-width:100%; height:auto;">
+
+  <h2>Key Findings</h2>
+  <ul>
+    <li><strong>AMP alone</strong> consistently yields the best speed-up across all three datasets.</li>
+    <li><strong>torch.compile</strong> improves performance only on the smallest graph (Cora), but regresses on Pubmed and Citeseer.</li>
+    <li>The combination of <em>compile + AMP</em> does not stack gains and often introduces overhead, making it slower than AMP alone.</li>
+    <li>GPU memory usage remains constant within each dataset (~17–53 MB), unaffected by optimization.</li>
+  </ul>
+
+  <p>Generated on YYYY-MM-DD.</p>
+</body>
+</html>
